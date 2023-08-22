@@ -1,6 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
+import * as Notifications from "expo-notifications";
 
+// SAVE DATA
 const storeData = async (key, value) => {
   try {
     const jsonValue = JSON.stringify(value);
@@ -11,6 +13,7 @@ const storeData = async (key, value) => {
   }
 };
 
+// GET DATA
 const getData = async (key) => {
   try {
     const jsonValue = await AsyncStorage.getItem(key);
@@ -20,32 +23,27 @@ const getData = async (key) => {
   }
 };
 
+// DELETE DATA
 const deleteData = async (key, value) => {
   try {
-    console.log("ddddddd");
-
-    let data = await getData("notes");
+    let data = await getData(key);
 
     for (let i = 0; i < data.length; i++) {
       if (data[i].createdAt === value.createdAt) {
-        console.log("equals");
-
+        console.log("equals", data[i].createdAt, "--", value.createdAt);
         data.splice(i, 1);
-        // console.log(value.createdAt, data[i].createdAt);
-        console.log(data);
       }
     }
 
     if (value.notificationId !== null) {
-      console.log(value.notificationId);
       await Notifications.cancelScheduledNotificationAsync(
         value.notificationId
       );
     }
 
-    await AsyncStorage.setItem("notes", JSON.stringify(data));
-    // setNotes(data);
-    navigation.navigate("Home");
+    await AsyncStorage.setItem(key, JSON.stringify(data));
+
+    return Promise.resolve();
   } catch (e) {
     Alert.alert("Error");
   }

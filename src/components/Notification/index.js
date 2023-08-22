@@ -12,14 +12,14 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export default function ModalNotification({
+const ModalNotification = ({
   modalVisible,
   setModalVisible,
   date,
   setDate,
   note,
   setNote,
-}) {
+}) => {
   const [showPicker, setShowPicker] = useState({
     showDate: false,
     showHours: false,
@@ -45,6 +45,7 @@ export default function ModalNotification({
   };
 
   const currentFormattedData = (type) => {
+    // console.log(date);
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
@@ -67,9 +68,14 @@ export default function ModalNotification({
       }}
     >
       <View style={styles.centeredView}>
-        <View style={[styles.modalView, { marginTop: "71%" }]}>
+        <View
+          style={[
+            styles.modalView,
+            { marginTop: Platform.OS === "ios" ? "85%" : "71%" },
+          ]}
+        >
           <Text style={styles.modalText}>
-            SELECT A TIME TO GET NOTIFIED FOR THE NOTE!
+            SELECT A TIME TO GET NOTIFIED FOR THE TASK!
           </Text>
           <View>
             <Text style={{ textAlign: "center" }}>DATE</Text>
@@ -118,4 +124,6 @@ export default function ModalNotification({
       </View>
     </Modal>
   );
-}
+};
+
+export default ModalNotification;

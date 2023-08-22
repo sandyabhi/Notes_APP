@@ -7,15 +7,7 @@ import styles from "./styles";
 export default function SearchBar({ data, onChange }) {
   const [searchData, setSearchData] = useState(data);
 
-  const handleSearch = (text) => {
-    // if (text) {
-    //   const newData = data.filter((item) => {
-    //     const itemTitle = item.title
-    //       ? item.title.toUpperCase()
-    //       : "".toUpperCase();
-    //   });
-    // }
-  };
+  const handleSearch = (text) => {};
 
   return (
     <View style={styles.searchArea}>
@@ -27,3 +19,5 @@ export default function SearchBar({ data, onChange }) {
     </View>
   );
 }
+
+// TODO

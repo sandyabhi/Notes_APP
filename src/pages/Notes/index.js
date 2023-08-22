@@ -1,23 +1,14 @@
 import { Alert } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect, useLayoutEffect } from "react";
-import {
-  SafeAreaView,
-  View,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
-import * as Notifications from "expo-notifications";
+import { SafeAreaView, View, TextInput, TouchableOpacity } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import styles from "./style";
-// import { useNavigation } from "@react-navigation/native";
-import { getData, storeData } from "../../utils/storage";
+import { deleteData, getData, storeData } from "../../utils/storage";
 import { useGlobalContext } from "../../context/context";
 import ModalNotification from "../../components/Notification";
 
 export default function Notes({ route, navigation }) {
-  const { notes, setNotes } = useGlobalContext();
+  const { notes, setNotes, updateContext } = useGlobalContext();
 
   const [date, setDate] = useState(new Date());
   const [note, setNote] = useState({
@@ -58,26 +49,10 @@ export default function Notes({ route, navigation }) {
   const handleSave = async () => {
     try {
       if (note.title === "") return;
-
-      //console.log("----------");
-      // const stored = await getData("notes");
-
-      // if (
-      //   stored.map((item) => {
-      //     if (item.title === note.title) {
-
-      //     }
-      //   })
-      // )
-      // console.log(note);
       const newNotesArr = [note, ...notes];
-      //console.log("----------", newNotesArr);
+
       await storeData("notes", newNotesArr);
-
-      //  console.log("----------");
-      // const stored = await getData("notes");
-      //      console.log(stored, "stores");
-
+      updateContext();
       navigation.navigate("Home");
     } catch (err) {
       Alert.alert("Error", "Some error is there!!");
@@ -87,47 +62,12 @@ export default function Notes({ route, navigation }) {
   const handleDelete = async () => {
     try {
       await deleteData("notes", note);
-      console.log("deel");
+      updateContext();
       navigation.navigate("Home");
     } catch (err) {
       Alert.alert("Error", "Some error is there!!");
     }
   };
-
-  // const deleteData = async (key, value) => {
-  //   try {
-  //     console.log("ddddddd");
-
-  //     let data = await getData("notes");
-  //     console.log(value.createdAt, data[2].createdAt);
-  //     console.log(data);
-  //     for (let i = 0; i < data.length; i++) {
-  //       if (data[i].createdAt === value.createdAt) {
-  //         console.log("equals");
-
-  //         data.splice(i, 1);
-  //         // console.log(value.createdAt, data[i].createdAt);
-  //         console.log(data);
-  //       }
-  //     }
-
-  //     if (value.notificationId !== null) {
-  //       console.log(value.notificationId);
-  //       await Notifications.cancelScheduledNotificationAsync(
-  //         value.notificationId
-  //       );
-  //     }
-
-  //     await AsyncStorage.setItem("notes", JSON.stringify(data));
-  //     setNotes(data);
-  //     navigation.navigate("Home");
-
-  //     // await AsyncStorage.setItem(key, jsonValue);
-  //     // return Promise.resolve();
-  //   } catch (e) {
-  //     return Promise.reject(e);
-  //   }
-  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -172,7 +112,6 @@ export default function Notes({ route, navigation }) {
               flex: 1,
             },
           ]}
-          // onPress={() => Save(note, navigation)}
           onPress={() => handleSave()}
         >
           <Feather name="save" size={29} color="white" />
@@ -186,7 +125,6 @@ export default function Notes({ route, navigation }) {
             },
           ]}
           onPress={() => handleDelete()}
-          // onPress={() => Delete(note, navigation)}
         >
           <Feather name="trash-2" size={24} color="white" />
         </TouchableOpacity>

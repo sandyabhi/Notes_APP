@@ -4,28 +4,28 @@ import React from "react";
 
 const GlobalContext = createContext();
 
+export const useGlobalContext = () => useContext(GlobalContext);
+
 export const GlobalContextProvider = ({ children }) => {
   const [notes, setNotes] = useState([]);
-  // const [labels, setLabels] = useState([]);
+
+  const updateContext = () => {
+    fetchLocalStorageData();
+  };
 
   useEffect(() => {
-    const fetchLocalStorageData = async () => {
-      const notes = await getData("notes");
-      if (notes) setNotes(notes);
-      //   const labels = await getData("labels");
-      //   if (labels) setLabels(labels);
-    };
     fetchLocalStorageData();
-  }, [notes]);
+  }, []);
+  // // }, [notes]);
+
+  const fetchLocalStorageData = async () => {
+    const notes = await getData("notes");
+    if (notes) setNotes(notes);
+  };
 
   return (
-    // <GlobalContext.Provider value={{ notes, setNotes, labels, setLabels }}>
-    <GlobalContext.Provider value={{ notes, setNotes }}>
+    <GlobalContext.Provider value={{ notes, setNotes, updateContext }}>
       {children}
     </GlobalContext.Provider>
   );
-};
-
-export const useGlobalContext = () => {
-  return useContext(GlobalContext);
 };
